@@ -4,14 +4,76 @@
 
 #include "SimpleOscMsg.h"
 
+#include <array>
+#include <unordered_map>
+#include <optional>
+#include <cassert>
+
 using namespace juce;
 
+// bi-directional container to associate UI Control with ID (for example: KnobId::Gain => juce::Slider* SliderGain)
+template <typename IdEnum, typename ObjPtrType, int MaxId>
+class IdPtrMap {
+    std::array<ObjPtrType, MaxId + 1> idToPtr_{};
+    std::unordered_map<ObjPtrType, IdEnum> ptrToId_;
 
+public:
+    void assign(IdEnum id, ObjPtrType ptr) {
+        int idx = static_cast<int>(id);
+        assert(idx > 0 && idx <= MaxId);
+        idToPtr_[idx] = ptr;
+        ptrToId_[ptr] = id;
+    }
+
+    ObjPtrType getPtr(IdEnum id) const {
+        int idx = static_cast<int>(id);
+        if (idx > 0 && idx <= MaxId)
+            return idToPtr_[idx];
+        return nullptr;
+    }
+
+    std::optional<IdEnum> getId(ObjPtrType ptr) const {
+        auto it = ptrToId_.find(ptr);
+        if (it != ptrToId_.end())
+            return it->second;
+        return std::nullopt;
+    }
+
+    // Check if a specific ID is unassigned (nullptr)
+    bool isUnassigned(IdEnum id) const {
+        int idx = static_cast<int>(id);
+        if (idx <= 0 || idx > MaxId) return true;
+        return idToPtr_[idx] == nullptr;
+    }
+
+    // Check if a pointer is assigned to any ID
+    bool hasPointer(ObjPtrType ptr) const {
+        return ptrToId_.find(ptr) != ptrToId_.end();
+    }
+
+    // Check if a pointer is NOT assigned to any ID
+    bool isPointerUnassigned(ObjPtrType ptr) const {
+        return !hasPointer(ptr);
+    }
+
+    void forEachAssigned(const std::function<void(IdEnum, ObjPtrType)>& callback) const {
+        for (int i = 1; i <= MaxId; ++i) {
+            if (idToPtr_[i])
+                callback(static_cast<IdEnum>(i), idToPtr_[i]);
+        }
+    }
+};
+
+// Main protocol class
 class NpRpcProto {
 public:
     static const juce::int32 NPRPC_VER{ 0x77770001 };
     static const juce::int32 NPRPC_INV_SESS_ID{ -1 };
     static const juce::int32 NPRPC_INV_SESS_TS{ -1 };
+
+    static const inline juce::String NPRPC_MCAST_ADDR{ "227.0.0.1" };
+    static const juce::int32 NPRPC_SRV_PORT{ 24024 };
+    static const juce::int32 NPRPC_CLN_PORT{ 24025 };
 
     enum class EPacketType
     {
@@ -66,6 +128,37 @@ public:
     inline static const juce::String NRPC_CONNECT_CH = "/NpRpc/connect";
     inline static const juce::String NRPC_KNOB_CH    = "/NpRpc/knob";
     inline static const juce::String NRPC_MODEL_CH   = "/NpRpc/model";
+
+    // UI controls Id
+
+    enum class ESliderId {
+          Gain = 1
+        , Master
+        , Delay
+        , Reverb
+        , Bass
+        , Mid
+        , Treble
+        , Presence
+
+        , MAX = 8
+    };
+
+    enum class EComboBoxId {
+        Model = 1
+      , Ir
+
+      , MAX = 2
+    };
+
+    enum class EButtonId {
+        NextModel = 1
+        , PrevModel
+        , NextIr
+        , PrevIr
+
+        , MAX = 4
+    };
 
 private:
         inline static const std::unordered_map<EPacketType, juce::String> oscAddrMap = {

@@ -2,7 +2,7 @@
 
 #include <JuceHeader.h>
 
-class IUdpListener {
+class IUdpRcListener {
 public:
 
     enum class EState {
@@ -27,12 +27,23 @@ public:
         , {EState::Error         , "Error"}
     };     
 
+    virtual void onStateChanged(IUdpRcListener::EState prevState, IUdpRcListener::EState state) = 0;
+
+    // Bi-directional 
     virtual void updateKnob(int id, float value) = 0;
     virtual void updateModelIndex(int id, int index) = 0;
-    virtual void addModelItem(int id, juce::String itemValue, int itemIndex) = 0;
-    virtual void onStateChanged(IUdpListener::EState prevState, IUdpListener::EState state) = 0;
-    virtual void onBrReceived(const juce::String addr) = 0;
 
-    ~IUdpListener() = default;
+    ~IUdpRcListener() = default;
 };
 
+
+class IUdpRcClientListener : public IUdpRcListener {
+public:
+    virtual void addModelItem(int id, juce::String itemValue, int itemIndex) = 0;
+    virtual void onBrReceived(const juce::String addr) = 0;
+};
+
+class IUdpRcServerListener : public IUdpRcListener {
+public:
+    virtual void onConnReceived(const juce::String addr) = 0;
+};
