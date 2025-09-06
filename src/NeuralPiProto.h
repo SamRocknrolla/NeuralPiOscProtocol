@@ -67,13 +67,13 @@ public:
 // Main protocol class
 class NpRpcProto {
 public:
-    static const juce::int32 NPRPC_VER{ 0x77770001 };
-    static const juce::int32 NPRPC_INV_SESS_ID{ -1 };
-    static const juce::int32 NPRPC_INV_SESS_TS{ -1 };
+    static const inline juce::int32 NPRPC_INV_SESS_ID{ -1 };
+    static const inline juce::int32 NPRPC_INV_SESS_TS{ -1 };
+    static const inline juce::int32 NPRPC_VER{ 0x77770001 };
 
     static const inline juce::String NPRPC_MCAST_ADDR{ "227.0.0.1" };
-    static const juce::int32 NPRPC_SRV_PORT{ 24024 };
-    static const juce::int32 NPRPC_CLN_PORT{ 24025 };
+    static const inline juce::int32 NPRPC_SRV_PORT{ 24024 };
+    static const inline juce::int32 NPRPC_CLN_PORT{ 24025 };
 
     enum class EPacketType
     {
