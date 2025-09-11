@@ -168,16 +168,17 @@ public:
 
 private:
         inline static const std::unordered_map<EPacketType, juce::String> oscAddrMap = {
-          { EPacketType::ConnectReq     , NRPC_CONNECT_CH }
-        , { EPacketType::ConnectRes     , NRPC_CONNECT_CH }
-        , { EPacketType::AbortReq       , NRPC_CONNECT_CH }
-        , { EPacketType::HeartbeatReq   , NRPC_CONNECT_CH }
-        , { EPacketType::HeartbeatRes   , NRPC_CONNECT_CH }
-        , { EPacketType::AddModelMsg    , NRPC_CONNECT_CH }
-        , { EPacketType::UpdateKnobMsg  , NRPC_KNOB_CH    }
-        , { EPacketType::SelectModelMsg , NRPC_MODEL_CH   }
-        , { EPacketType::BroadcastReq   , NRPC_BCAST_CH   }
-        , { EPacketType::BroadcastRes   , NRPC_BCAST_CH   }
+          { EPacketType::ConnectReq          , NRPC_CONNECT_CH }
+        , { EPacketType::ConnectRes          , NRPC_CONNECT_CH }
+        , { EPacketType::AbortReq            , NRPC_CONNECT_CH }
+        , { EPacketType::HeartbeatReq        , NRPC_CONNECT_CH }
+        , { EPacketType::HeartbeatRes        , NRPC_CONNECT_CH }
+        , { EPacketType::AddModelMsg         , NRPC_CONNECT_CH }
+        , { EPacketType::UpdateKnobMsg       , NRPC_KNOB_CH    }
+        , { EPacketType::UpdateKnobColorMsg  , NRPC_KNOB_CH    }
+        , { EPacketType::SelectModelMsg      , NRPC_MODEL_CH   }
+        , { EPacketType::BroadcastReq        , NRPC_BCAST_CH   }
+        , { EPacketType::BroadcastRes        , NRPC_BCAST_CH   }
     };
 
 public:
