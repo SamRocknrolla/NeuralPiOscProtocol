@@ -41,6 +41,7 @@ class IUdpRcClientListener : public IUdpRcListener {
 public:
     virtual void addModelItem(int id, juce::String itemValue, int itemIndex) = 0;
     virtual void onBrReceived(const juce::String addr) = 0;
+    virtual void updateKnobColor(int id, uint32_t value) = 0;
 };
 
 class IUdpRcServerListener : public IUdpRcListener {

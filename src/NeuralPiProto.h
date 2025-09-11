@@ -86,6 +86,7 @@ public:
         , AddModelMsg    = 0x20
         , UpdateKnobMsg  = 0x21
         , SelectModelMsg = 0x22
+        , UpdateKnobColorMsg  = 0x23
         , BroadcastReq   = 0xFF
         , BroadcastRes   = 0xFE
     };
@@ -117,6 +118,11 @@ public:
     enum EUpdateKnobMsg {
         EUpdateKnobMsg_KnobId = 3
         , EUpdateKnobMsg_KnobValue = 4
+    };
+
+    enum EUpdateKnobColorMsg {
+        EUpdateKnobMsg_KnobId = 3
+        , EUpdateKnobMsg_KnobColor = 4
     };
 
     enum ESelectModel {
@@ -211,6 +217,13 @@ public:
         SimpleOscMsg msg = genHeader(EPacketType::UpdateKnobMsg, sessionId);
         msg.AddInt32(id);
         msg.AddFloat32(val);
+        return msg;
+    }
+
+    static SimpleOscMsg genUpdateKnobColorMsg(int32 sessionId, int32 id, uint32 val) {
+        SimpleOscMsg msg = genHeader(EPacketType::UpdateKnobColorMsg, sessionId);
+        msg.AddInt32(id);
+        msg.AddRGBA(val);
         return msg;
     }
 

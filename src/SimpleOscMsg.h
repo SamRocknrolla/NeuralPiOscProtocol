@@ -33,6 +33,7 @@ public:
         Argument(int32_t val) : type(INT32), i(val) {}
         Argument(float val) : type(FLOAT32), f(val) {}
         Argument(const std::string& val) : type(STRING), s(val) {}
+        Argument(uint32_t val) : type(RGBA), i(val) {}
 
         Argument(const Argument& other) = default;
         Argument(Argument&& other) noexcept = default;
@@ -43,16 +44,19 @@ public:
         inline bool isInt32() const { return type == INT32; }
         inline bool isFloat32() const { return type == FLOAT32; }
         inline bool isString() const { return type == STRING; }
+        inline bool isRGBA() const { return type == RGBA; }
 
         inline int32_t getInt32() const { return (isInt32()) ? i : 0; }
         inline float getFloat32() const { return (isFloat32()) ? f : 0.0f; }
         inline std::string getString() const { return (isString()) ? s : std::string{}; }
+        inline uint32_t getRGBA() const { return (isRGBA()) ? i : 0; }
 
     private:
-        enum Type { INT32, FLOAT32, STRING } type;
+        enum Type { INT32, FLOAT32, STRING , RGBA} type;
 
         union {
             int32_t i;
+            uint32_t i;
             float f;
         };
         std::string s;
@@ -69,6 +73,7 @@ public:
     // Construction
     void setAddress(const std::string& addr) { address = addr; }
     void AddInt32(int32_t value) { arguments.emplace_back(value); };
+    void AddRGBA(uint32_t value) { arguments.emplace_back(value); };
     void AddFloat32(float value) { arguments.emplace_back(value); };
     void AddString(const std::string& value) { arguments.emplace_back(value); };
     void clear() {     arguments.clear(); address.clear(); };
@@ -89,6 +94,8 @@ public:
                 tag += 'f';
             else if (arg.isString()) 
                 tag += 's';
+            else if (arg.isRGBA())
+                tag += 'r';
         }
         writePaddedString(outBuffer, tag);
     
@@ -108,6 +115,11 @@ public:
             }
             else if (arg.isString()) {
                 writePaddedString(outBuffer, arg.getString());
+            }
+            else if (arg.isRGBA()) {
+                uint32_t net = htonl(arg.getRGBA());
+                const uint8_t* p = reinterpret_cast<const uint8_t*>(&net);
+                outBuffer.insert(outBuffer.end(), p, p + 4);
             }
         }
     
@@ -156,6 +168,14 @@ public:
                 std::string str;
                 offset = readPaddedString(data, offset, str);
                 arguments.emplace_back(str);
+                break;
+            }
+            case 'r': {
+                uint32_t val;
+                std::memcpy(&val, data + offset, 4);
+                val = ntohl(val);
+                arguments.emplace_back(val);
+                offset += 4;
                 break;
             }
             default:
