@@ -121,8 +121,8 @@ public:
     };
 
     enum EUpdateKnobColorMsg {
-        EUpdateKnobMsg_KnobId = 3
-        , EUpdateKnobMsg_KnobColor = 4
+        EUpdateKnobColorMsg_KnobId = 3
+        , EUpdateKnobColorMsg_KnobColor = 4
     };
 
     enum ESelectModel {

@@ -49,14 +49,14 @@ public:
         inline int32_t getInt32() const { return (isInt32()) ? i : 0; }
         inline float getFloat32() const { return (isFloat32()) ? f : 0.0f; }
         inline std::string getString() const { return (isString()) ? s : std::string{}; }
-        inline uint32_t getRGBA() const { return (isRGBA()) ? i : 0; }
+        inline uint32_t getRGBA() const { return (isRGBA()) ? rgba : 0; }
 
     private:
         enum Type { INT32, FLOAT32, STRING , RGBA} type;
 
         union {
             int32_t i;
-            uint32_t i;
+            uint32_t rgba;
             float f;
         };
         std::string s;
